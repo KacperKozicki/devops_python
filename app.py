@@ -5,10 +5,10 @@ app = Flask(__name__)
 
 # Konfiguracja bazy danych
 db_config = {
-    'user': 'youruser',
-    'password': 'yourpassword',
+    'user': 'myuser',
+    'password': 'mypassword',
     'host': 'mysql',  # W Docker Compose nazwa usługi to host
-    'database': 'yourdatabase',
+    'database': 'mydatabase',
 }
 
 @app.route('/helloworld', methods=['GET'])
