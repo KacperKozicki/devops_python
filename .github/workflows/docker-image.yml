@@ -1,0 +1,44 @@
+name: Docker Compose CI
+
+on:
+  push:
+    branches: [ "wsei-lab" ]
+  pull_request:
+    branches: [ "wsei-lab" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Pobranie kodu źródłowego
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # Ustawienie Docker Compose
+    - name: Set up Docker Compose
+      run: |
+        docker-compose -f docker-compose.yml build
+
+    # Uruchomienie usług w tle
+    - name: Start services
+      run: |
+        docker-compose -f docker-compose.yml up -d
+
+    # Sprawdzanie zdrowia aplikacji
+    - name: Wait for services to be ready
+      run: |
+        for i in {1..10}; do
+          curl -f http://localhost:5000/helloworld && break || sleep 5;
+        done
+
+    # Testy API
+    - name: Run API tests
+      run: |
+        curl -X POST -H "Content-Type: application/json" -d '{"data": "test"}' http://localhost:5000/add
+        curl http://localhost:5000/get
+
+    # Zatrzymanie usług i usunięcie kontenerów
+    - name: Clean up
+      run: |
+        docker-compose -f docker-compose.yml down
