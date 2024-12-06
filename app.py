@@ -1,14 +1,15 @@
 from flask import Flask, request, jsonify
 import mysql.connector
+import os
 
 app = Flask(__name__)
 
-# Konfiguracja bazy danych
+# Konfiguracja bazy danych z użyciem zmiennych środowiskowych
 db_config = {
-    'user': 'myuser',
-    'password': 'mypassword',
-    'host': 'mysql',  # W Docker Compose nazwa usługi to host
-    'database': 'mydatabase',
+    'user': os.getenv('DB_USER', 'myuser'),
+    'password': os.getenv('DB_PASSWORD', 'mypassword'),
+    'host': os.getenv('DB_HOST', 'mysql-service'),  # Użyj zmiennej środowiskowej
+    'database': os.getenv('DB_NAME', 'mydatabase'),
 }
 
 @app.route('/helloworld', methods=['GET'])
@@ -44,4 +45,3 @@ def get_data():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
-# test na commita
